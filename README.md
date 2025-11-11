@@ -21,32 +21,39 @@
 - Node.js 16+
 - npm 或 yarn
 
-### 安装依赖
+### 安装步骤
 
 ```bash
+# 1. 克隆项目
+git clone <你的仓库地址>
+cd monaco-ai-assist-web
+
+# 2. 安装依赖（会自动复制 Monaco Editor）
 npm install
-```
 
-### 开发模式
+# 3. 下载 Pyodide（可选 - 离线开发需要，约 300 MB）
+npm run download:pyodide
 
-```bash
+# 4. 启动开发服务器
 npm run dev
 ```
 
 访问 `http://localhost:5173/`
 
-### 生产构建
+> **💡 提示**：  
+> - Pyodide 和 Monaco Editor 文件（~350 MB）**不在 Git 仓库中**  
+> - `npm install` 会自动复制 Monaco Editor  
+> - Pyodide 可选：开发时用本地文件，生产可用 CDN  
+> - 详见 [文件管理说明](#-文件管理) 和 [部署指南](./DEPLOYMENT.md)
+
+### 可用命令
 
 ```bash
-npm run build
-```
-
-构建文件将生成在 `dist/` 目录。
-
-### 预览生产构建
-
-```bash
-npm run preview
+npm run dev                # 启动开发服务器
+npm run build              # 构建生产版本
+npm run preview            # 预览生产构建
+npm run download:pyodide   # 下载 Pyodide 文件（可选）
+npm run copy:monaco        # 复制 Monaco 文件（install 自动执行）
 ```
 
 ## 📦 技术栈
@@ -170,7 +177,53 @@ loader.config({ monaco })
 - 选择的代码
 - 字符数和行数
 
-## 🐛 常见问题
+## � 文件管理
+
+### Pyodide 和 Monaco Editor 文件说明
+
+本项目包含两个大型库文件，**不会上传到 Git 仓库**：
+
+| 文件 | 大小 | 位置 | Git 状态 |
+|------|------|------|----------|
+| Pyodide | ~300 MB | `public/pyodide/` | ❌ 已排除 |
+| Monaco Editor | ~50 MB | `public/vs/` | ❌ 已排除 |
+
+### 为什么不上传？
+
+- 文件体积过大（350+ MB）
+- GitHub 限制单文件 100 MB
+- 可以通过脚本自动获取
+- 生产环境推荐使用 CDN
+
+### 如何获取？
+
+```bash
+# Monaco Editor（npm install 自动执行）
+npm run copy:monaco
+
+# Pyodide（可选 - 离线开发需要）
+npm run download:pyodide
+npm run download:pyodide -- --with-packages  # 包含常用科学计算包
+```
+
+### 生产部署建议
+
+**教学网站推荐使用 CDN**（节省带宽、提升速度）：
+
+```typescript
+// .env.production
+VITE_USE_CDN=true
+VITE_PYODIDE_URL=https://cdn.jsdelivr.net/pyodide/v0.29.0/full/
+```
+
+详细说明请参考：
+- 📖 [完整部署指南](./DEPLOYMENT.md)
+- 📋 [文件管理 FAQ](./FILE_MANAGEMENT_FAQ.md)
+- ⚡ [3分钟速查](./QUICK_REFERENCE.md)
+
+---
+
+## �🐛 常见问题
 
 ### Q: Pyodide 加载很慢？
 
