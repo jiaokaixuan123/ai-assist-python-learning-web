@@ -1,0 +1,112 @@
+# 依赖
+node_modules/
+.pnp
+.pnp.js
+
+# 测试
+coverage/
+*.lcov
+.nyc_output
+
+# 生产构建
+dist/
+dist-ssr/
+build/
+
+# 编辑器和 IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 环境变量
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 操作系统
+Thumbs.db
+Desktop.ini
+
+# TypeScript
+*.tsbuildinfo
+
+# Vite
+.vite/
+
+# 临时文件
+*.tmp
+*.temp
+.cache/
+
+# 用户数据（可选，根据需求调整）
+# 如果不想提交用户的代码和设置，取消下面的注释
+# *.local.json
+
+# 备份文件
+*.backup
+*.bak
+*~
+
+# Python 缓存（如果项目中有 Python 脚本）
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# ==========================================
+# Pyodide 文件（~300 MB - 不提交到 Git）
+# ==========================================
+# 部署策略：
+# 1. 开发环境：使用本地文件（public/pyodide/）
+# 2. 生产环境：使用 CDN（https://cdn.jsdelivr.net/pyodide/）
+# 3. 其他开发者：执行 npm run download:pyodide 下载
+public/pyodide/*.whl
+public/pyodide/*.tar
+public/pyodide/*.zip
+public/pyodide/*.js
+public/pyodide/*.wasm
+public/pyodide/*.data
+public/pyodide/*.d.ts
+public/pyodide/*.mjs
+public/pyodide/*.map
+# 保留配置文件供参考
+!public/pyodide/package.json
+!public/pyodide/pyodide-lock.json
+!public/pyodide/README.md
+
+# ==========================================
+# Monaco Editor 文件（~50 MB - 不提交到 Git）
+# ==========================================
+# 部署策略：
+# 1. 开发环境：从 node_modules/monaco-editor 复制
+# 2. 生产环境：构建时自动处理（Vite）
+# 3. 其他开发者：执行 npm install 即可
+public/vs/
+!public/vs/README.md
+
+# 测试和诊断文件（可选）
+check-files.ps1
+diagnose.ps1
+quick-diagnose.ps1
+verify-local.ps1
+public/test-debug.html
+public/react-devtools-check.html
+
+# 文档（如果不想提交某些文档）
+# *.md
+# 但建议保留 README.md
+!README.md

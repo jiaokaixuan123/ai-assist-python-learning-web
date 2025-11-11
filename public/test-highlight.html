@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语义高亮测试</title>
+    <style>
+        body {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', monospace;
+            padding: 20px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #2d2d2d;
+            border-radius: 8px;
+        }
+        
+        h2 {
+            color: #4ec9b0;
+            margin-top: 0;
+        }
+        
+        /* 🎨 语义高亮样式 - 测试 */
+        .user-defined-function {
+            color: #DCDCAA !important;
+            font-weight: 500;
+        }
+        
+        .user-defined-class {
+            color: #4EC9B0 !important;
+            font-weight: 500;
+        }
+        
+        .user-defined-variable {
+            color: #9CDCFE !important;
+        }
+        
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1e1e1e;
+            border-left: 3px solid #0e639c;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 语义高亮 CSS 测试页面</h1>
+    
+    <div class="test-section">
+        <h2>测试 1: 函数样式（应该是黄色）</h2>
+        <div class="test-item">
+            这是一个 <span class="user-defined-function">addtwo</span> 函数
+        </div>
+        <div class="test-item">
+            这是另一个 <span class="user-defined-function">calculate</span> 函数
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>测试 2: 类样式（应该是青色）</h2>
+        <div class="test-item">
+            这是一个 <span class="user-defined-class">Person</span> 类
+        </div>
+        <div class="test-item">
+            这是另一个 <span class="user-defined-class">Calculator</span> 类
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>测试 3: 变量样式（应该是浅蓝色）</h2>
+        <div class="test-item">
+            这是一个 <span class="user-defined-variable">list</span> 变量
+        </div>
+        <div class="test-item">
+            这是另一个 <span class="user-defined-variable">diict</span> 变量
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>测试 4: 检查计算后的样式</h2>
+        <button onclick="checkStyles()" style="padding: 10px 20px; background: #0e639c; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            🔍 检查样式
+        </button>
+        <pre id="result" style="margin-top: 10px; padding: 10px; background: #1e1e1e; border-radius: 4px;"></pre>
+    </div>
+    
+    <script>
+        function checkStyles() {
+            const results = [];
+            
+            // 检查函数样式
+            const funcEl = document.querySelector('.user-defined-function');
+            if (funcEl) {
+                const style = getComputedStyle(funcEl);
+                results.push('✅ 函数元素存在');
+                results.push(`   颜色: ${style.color}`);
+                results.push(`   期望: rgb(220, 220, 170) 或 #DCDCAA`);
+                results.push(`   匹配: ${style.color === 'rgb(220, 220, 170)' ? '✅' : '❌'}`);
+            } else {
+                results.push('❌ 未找到函数元素');
+            }
+            
+            results.push('');
+            
+            // 检查类样式
+            const classEl = document.querySelector('.user-defined-class');
+            if (classEl) {
+                const style = getComputedStyle(classEl);
+                results.push('✅ 类元素存在');
+                results.push(`   颜色: ${style.color}`);
+                results.push(`   期望: rgb(78, 201, 176) 或 #4EC9B0`);
+                results.push(`   匹配: ${style.color === 'rgb(78, 201, 176)' ? '✅' : '❌'}`);
+            } else {
+                results.push('❌ 未找到类元素');
+            }
+            
+            results.push('');
+            
+            // 检查变量样式
+            const varEl = document.querySelector('.user-defined-variable');
+            if (varEl) {
+                const style = getComputedStyle(varEl);
+                results.push('✅ 变量元素存在');
+                results.push(`   颜色: ${style.color}`);
+                results.push(`   期望: rgb(156, 220, 254) 或 #9CDCFE`);
+                results.push(`   匹配: ${style.color === 'rgb(156, 220, 254)' ? '✅' : '❌'}`);
+            } else {
+                results.push('❌ 未找到变量元素');
+            }
+            
+            document.getElementById('result').textContent = results.join('\n');
+        }
+        
+        // 页面加载时自动检查
+        window.addEventListener('load', () => {
+            setTimeout(checkStyles, 100);
+        });
+    </script>
+    
+    <div class="test-section">
+        <h2>📋 测试说明</h2>
+        <p>如果上面的文字颜色显示正确：</p>
+        <ul>
+            <li>✅ CSS 样式定义正确</li>
+            <li>✅ 浏览器支持这些样式</li>
+            <li>❌ 问题可能在 Monaco 编辑器的装饰器应用</li>
+        </ul>
+        <p>如果颜色不正确：</p>
+        <ul>
+            <li>❌ CSS 样式没有生效</li>
+            <li>❌ 可能是 CSS 文件加载问题</li>
+        </ul>
+    </div>
+</body>
+</html>
