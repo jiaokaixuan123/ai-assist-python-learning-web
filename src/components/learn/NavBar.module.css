@@ -1,0 +1,52 @@
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 20px;
+  background: #161b22;
+  border-bottom: 1px solid #21262d;
+  flex-shrink: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.left { display: flex; align-items: center; gap: 16px; }
+.back {
+  color: #8b949e;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 4px 10px;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.back:hover { color: #e6edf3; border-color: #8b949e; }
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e6edf3;
+}
+.right { display: flex; align-items: center; gap: 16px; }
+.link {
+  color: #8b949e;
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.2s;
+}
+.link:hover { color: #e6edf3; }
+.user { font-size: 13px; color: #c9d1d9; }
+.logoutBtn {
+  background: none;
+  border: 1px solid #30363d;
+  color: #8b949e;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.logoutBtn:hover { border-color: #f85149; color: #f85149; }
+.loginLink {
+  color: #388bfd;
+  text-decoration: none;
+  font-size: 13px;
+}

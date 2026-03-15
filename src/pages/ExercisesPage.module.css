@@ -1,0 +1,68 @@
+.page {
+  min-height: 100vh;
+  background: #0d1117;
+  color: #e6edf3;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 40px;
+  width: 100%;
+}
+.header { margin-bottom: 32px; }
+.title { font-size: 28px; font-weight: 700; color: #e6edf3; margin: 0 0 8px; }
+.sub { font-size: 14px; color: #8b949e; margin: 0 0 20px; }
+.topRow { display: flex; align-items: center; justify-content: space-between; }
+.filters { display: flex; gap: 8px; }
+.filterBtn {
+  padding: 5px 16px;
+  border-radius: 20px;
+  border: 1px solid #30363d;
+  background: transparent;
+  color: #8b949e;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filterBtn:hover { border-color: #8b949e; color: #c9d1d9; }
+.filterBtn.active { background: #21262d; border-color: #388bfd; color: #388bfd; }
+.progress { font-size: 13px; color: #3fb950; }
+
+.list { display: flex; flex-direction: column; gap: 4px; }
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, background 0.15s;
+}
+.row:hover { border-color: #388bfd; background: #1c2128; }
+.row.done .idx { color: #3fb950; background: rgba(63, 185, 80, 0.12); }
+
+.idx {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #21262d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  color: #8b949e;
+}
+.info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.exTitle { font-size: 15px; font-weight: 500; color: #e6edf3; }
+.tagRow { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-size: 11px; background: #21262d; color: #8b949e; padding: 2px 8px; border-radius: 4px; }
+.diff { font-size: 13px; font-weight: 500; min-width: 48px; text-align: right; }
+.arrow { color: #484f58; font-size: 16px; }

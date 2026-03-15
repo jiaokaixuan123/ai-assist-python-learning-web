@@ -1,0 +1,398 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #1e1e1e;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #252526;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.label {
+  font-size: 12px;
+  color: #8b949e;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btnRun {
+  background: #238636;
+  color: #fff;
+  border: none;
+  padding: 5px 14px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btnRun:hover:not(:disabled) { background: #2ea043; }
+.btnRun:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btnSecondary {
+  background: transparent;
+  color: #8b949e;
+  border: 1px solid #444;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnSecondary:hover { border-color: #8b949e; color: #c9d1d9; }
+
+.btnAi {
+  background: rgba(56, 139, 253, 0.15);
+  color: #388bfd;
+  border: 1px solid rgba(56, 139, 253, 0.3);
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnAi:hover:not(:disabled) {
+  background: rgba(56, 139, 253, 0.25);
+}
+.btnAi:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.editorWrap {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.outputArea {
+  height: 180px;
+  flex-shrink: 0;
+  border-top: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a1a;
+}
+
+.outputHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  background: #252526;
+  border-bottom: 1px solid #333;
+  font-size: 11px;
+  color: #8b949e;
+  flex-shrink: 0;
+}
+
+.clearBtn {
+  background: none;
+  border: none;
+  color: #484f58;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.clearBtn:hover { color: #8b949e; }
+
+.outputPre {
+  flex: 1;
+  overflow-y: auto;
+  margin: 0;
+  padding: 10px 14px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #d4d4d4;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── 模式切换 Tab ── */
+.tabs {
+  display: flex;
+  flex-shrink: 0;
+  border-bottom: 1px solid #333;
+  background: #1e1e1e;
+}
+
+.tab {
+  flex: 1;
+  padding: 7px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #8b949e;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tab:hover {
+  color: #c9d1d9;
+  background: #252526;
+}
+
+.tabActive {
+  color: #e6edf3;
+  border-bottom-color: #388bfd;
+  background: #252526;
+}
+
+/* ── 可视化模式 ── */
+.vizWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  background: #1a1a1a;
+}
+
+.vizLoading, .vizError {
+  text-align: center;
+  color: #8b949e;
+  padding: 20px;
+}
+
+.vizError button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: #252526;
+  color: #c9d1d9;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.playBtn {
+  flex: 0 0 auto;
+  background: rgba(56, 139, 253, 0.15);
+  color: #388bfd;
+  border-bottom-color: transparent !important;
+}
+
+.viz {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+}
+
+.vizBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #252526;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.vizTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e6edf3;
+}
+
+.vizControls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.vizControls button {
+  background: #333;
+  color: #c9d1d9;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.vizControls button:hover:not(:disabled) {
+  background: #444;
+}
+
+.vizControls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.vizStep {
+  font-size: 11px;
+  color: #8b949e;
+  min-width: 60px;
+  text-align: center;
+}
+
+.vizBody {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.vizCode {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #333;
+  overflow: hidden;
+}
+
+.vizCodeLabel {
+  padding: 6px 10px;
+  background: #252526;
+  font-size: 11px;
+  color: #8b949e;
+  font-weight: 600;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.vizCodeLines {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+}
+
+.vizLine {
+  display: flex;
+  align-items: center;
+  padding: 2px 10px;
+  line-height: 1.6;
+  color: #d4d4d4;
+}
+
+.vizLinePast {
+  background: rgba(56, 139, 253, 0.05);
+}
+
+.vizLineActive {
+  background: rgba(56, 139, 253, 0.2);
+  color: #fff;
+  font-weight: 500;
+}
+
+.vizLineNo {
+  display: inline-block;
+  width: 30px;
+  text-align: right;
+  color: #484f58;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.vizArrow {
+  color: #388bfd;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.vizLineCode {
+  flex: 1;
+  white-space: pre;
+}
+
+.vizVars {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.vizEmpty {
+  padding: 20px;
+  text-align: center;
+  color: #484f58;
+  font-size: 12px;
+}
+
+.vizVarList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.vizVarRow {
+  display: flex;
+  align-items: baseline;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+  background: #252526;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 11px;
+}
+
+.vizVarName {
+  color: #9cdcfe;
+  font-weight: 500;
+  margin-right: 6px;
+}
+
+.vizVarEq {
+  color: #484f58;
+  margin-right: 6px;
+}
+
+.vizVarVal {
+  color: #ce9178;
+  flex: 1;
+  word-break: break-all;
+}
+
+.vizOutSection {
+  border-top: 1px solid #333;
+  padding: 8px;
+  background: #161b22;
+}
+
+.vizOut {
+  margin: 6px 0 0;
+  padding: 8px;
+  background: #0d1117;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 11px;
+  color: #c9d1d9;
+  max-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.vizNewOut {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #238636;
+}
+
+.vizProgress {
+  height: 3px;
+  background: #252526;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.vizProgressFill {
+  height: 100%;
+  background: #388bfd;
+  transition: width 0.2s;
+}

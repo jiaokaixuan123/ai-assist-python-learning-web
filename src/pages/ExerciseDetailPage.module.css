@@ -1,0 +1,177 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #0d1117;
+  color: #e6edf3;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.loading {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b949e;
+  font-size: 16px;
+  background: #0d1117;
+}
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── 左侧 ── */
+.leftPane {
+  width: 480px;
+  flex-shrink: 0;
+  border-right: 1px solid #21262d;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.problemHeader { border-bottom: 1px solid #21262d; padding-bottom: 16px; }
+.problemTitle { font-size: 20px; font-weight: 700; color: #e6edf3; margin: 0 0 10px; }
+.meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.diff { font-size: 13px; font-weight: 500; }
+.tag { font-size: 11px; background: #21262d; color: #8b949e; padding: 2px 8px; border-radius: 4px; }
+
+.mdWrap { font-size: 14px; line-height: 1.8; color: #c9d1d9; }
+.mdWrap h2 { font-size: 16px; color: #e6edf3; margin: 20px 0 8px; }
+.mdWrap p { margin: 0 0 12px; }
+.mdWrap code {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  color: #e3b341;
+}
+.mdWrap pre {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 14px;
+  overflow-x: auto;
+}
+.mdWrap pre code { background: none; border: none; padding: 0; color: #e6edf3; }
+
+/* ── 结果 ── */
+.resultsSection { display: flex; flex-direction: column; gap: 10px; }
+.resultsTitle { font-size: 15px; font-weight: 600; color: #e6edf3; margin: 0 0 4px; }
+.passed { color: #3fb950; margin-left: 8px; }
+.failed { color: #f85149; margin-left: 8px; }
+.caseCard {
+  border-radius: 8px;
+  padding: 12px 14px;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+.casePass { background: rgba(63, 185, 80, 0.08); border-color: rgba(63, 185, 80, 0.3); color: #3fb950; }
+.caseFail { background: rgba(248, 81, 73, 0.08); border-color: rgba(248, 81, 73, 0.3); color: #f85149; }
+.caseHead { font-weight: 600; }
+.caseLine { color: #c9d1d9; }
+.caseLine code { background: #21262d; padding: 1px 6px; border-radius: 3px; font-family: monospace; }
+
+/* ── AI ── */
+.aiBox {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 14px;
+}
+.aiPre {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #c9d1d9;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── Hint ── */
+.hintSection { display: flex; flex-direction: column; gap: 8px; }
+.hintToggle {
+  background: rgba(227, 179, 65, 0.1);
+  border: 1px solid rgba(227, 179, 65, 0.3);
+  color: #e3b341;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  width: fit-content;
+  transition: all 0.2s;
+}
+.hintToggle:hover { background: rgba(227, 179, 65, 0.2); }
+.hintText { font-size: 13px; color: #c9d1d9; line-height: 1.6; margin: 0; }
+
+/* ── 右侧 ── */
+.rightPane { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.editorToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: #252526;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+.envStatus { font-size: 12px; color: #8b949e; }
+.editorActions { display: flex; gap: 8px; align-items: center; }
+
+.btnJudge {
+  background: #1f6feb;
+  color: #fff;
+  border: none;
+  padding: 6px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btnJudge:hover:not(:disabled) { background: #388bfd; }
+.btnJudge:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btnSecondary {
+  background: transparent;
+  color: #8b949e;
+  border: 1px solid #444;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnSecondary:hover { border-color: #8b949e; color: #c9d1d9; }
+
+.btnAi {
+  background: rgba(56, 139, 253, 0.15);
+  color: #388bfd;
+  border: 1px solid rgba(56, 139, 253, 0.3);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnAi:hover:not(:disabled) { background: rgba(56, 139, 253, 0.25); }
+.btnAi:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.editorWrap { flex: 1; overflow: hidden; min-height: 0; }
+
+.resultBanner {
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  flex-shrink: 0;
+}
+.bannerPass { background: rgba(63, 185, 80, 0.15); color: #3fb950; border-top: 1px solid rgba(63, 185, 80, 0.3); }
+.bannerFail { background: rgba(248, 81, 73, 0.1); color: #f85149; border-top: 1px solid rgba(248, 81, 73, 0.3); }

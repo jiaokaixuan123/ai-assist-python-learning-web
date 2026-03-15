@@ -147,6 +147,68 @@ autopep8.fix_code(CODE_TO_FORMAT, options={'aggressive': 1})
     }
     return;
   }
+  // 执行追踪：逐步执行代码，捕获每一步的行号、变量、输出
+  if (type === 'trace') {
+    try {
+      pyodide.globals.set('USER_CODE_TRACE', code);
+      const traceResult = await pyodide.runPythonAsync(`
+import sys, io, json, traceback
+
+source = USER_CODE_TRACE
+steps = []
+output_buffer = io.StringIO()
+old_stdout = sys.stdout
+sys.stdout = output_buffer
+
+def trace_calls(frame, event, arg):
+    if event == 'line':
+        # 只追踪用户代码（文件名为 <user>）
+        if frame.f_code.co_filename == '<user>':
+            line_no = frame.f_lineno
+            # 复制局部变量（避免引用问题）
+            local_vars = {}
+            for k, v in frame.f_locals.items():
+                try:
+                    # 只保留基本类型，复杂对象用 repr
+                    if isinstance(v, (int, float, str, bool, type(None))):
+                        local_vars[k] = v
+                    elif isinstance(v, (list, tuple, dict, set)):
+                        # 限制长度，避免过大
+                        if len(str(v)) < 200:
+                            local_vars[k] = v
+                        else:
+                            local_vars[k] = f"{type(v).__name__}(...)"
+                    else:
+                        local_vars[k] = repr(v)[:100]
+                except:
+                    local_vars[k] = "<error>"
+
+            steps.append({
+                'line': line_no - 1,  # 转为 0-based
+                'vars': local_vars,
+                'output': output_buffer.getvalue()
+            })
+    return trace_calls
+
+try:
+    sys.settrace(trace_calls)
+    exec(compile(source, '<user>', 'exec'), {})
+    sys.settrace(None)
+    sys.stdout = old_stdout
+    result = {'steps': steps, 'error': None}
+except Exception as e:
+    sys.settrace(None)
+    sys.stdout = old_stdout
+    result = {'steps': steps, 'error': str(e)}
+
+json.dumps(result)
+`);
+      self.postMessage({ id, type: 'trace', result: traceResult });
+    } catch (err: any) {
+      self.postMessage({ id, type: 'trace', error: err.message || safeString(err) });
+    }
+    return;
+  }
   self.postMessage({ id, error: 'Unknown type: ' + type });
 }
 
