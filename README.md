@@ -28,14 +28,28 @@
 git clone <你的仓库地址>
 cd monaco-ai-assist-web
 
-# 2. 安装依赖（会自动复制 Monaco Editor）
+# 2. 安装前端依赖（会自动复制 Monaco Editor）
 npm install
 
-# 3. 下载 Pyodide（可选 - 离线开发需要，约 300 MB）
+# 3. 下载 Pyodide
 npm run download:pyodide
 
-# 4. 启动开发服务器
+# 4. 启动前端开发服务器
 npm run dev
+
+# 5. 进入后端
+cd backend
+
+# 6. 创建虚拟环境
+python -m venv .venv
+
+# 7. 激活虚拟环境
+.venv\Scripts\activate
+
+# 8. 启动后端
+python seed.py
+uvicorn main:app --reload
+
 ```
 
 访问 `http://localhost:5173/`
