@@ -16,7 +16,6 @@ const coreFiles = [
   'pyodide.mjs.map',
   'pyodide.asm.js',
   'pyodide.asm.wasm',
-  'pyodide.d.ts',
   'pyodide-lock.json',
   'python_stdlib.zip',
   'package.json'
