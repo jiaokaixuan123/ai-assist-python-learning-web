@@ -8,6 +8,7 @@ from models.user import UserRegister, UserLogin
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
+# 注册路由
 @router.post("/register")
 async def register(body: UserRegister):
     db = get_db()
@@ -17,14 +18,18 @@ async def register(body: UserRegister):
         "username": body.username,
         "password": hash_password(body.password),
         "email": body.email,
+        "role": body.role,
         "avatar": None,
         "created_at": datetime.utcnow(),
     }
+    # 将新用户插入数据库表
     result = await db.users.insert_one(user)
+    # 生成 JWT token
     token = create_access_token({"sub": str(result.inserted_id)})
     return {"access_token": token, "token_type": "bearer", "username": body.username}
 
 
+# 登陆路由
 @router.post("/login")
 async def login(body: UserLogin):
     db = get_db()
@@ -42,5 +47,6 @@ async def me(current_user: dict = __import__('fastapi').Depends(__import__('core
         "username": current_user["username"],
         "email": current_user.get("email"),
         "avatar": current_user.get("avatar"),
+        "role": current_user.get("role", "student"),
         "created_at": current_user["created_at"],
     }

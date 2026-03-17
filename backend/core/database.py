@@ -1,5 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic_settings import BaseSettings
+from typing import Optional
 
 
 class Settings(BaseSettings):
@@ -15,7 +16,7 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-client: AsyncIOMotorClient = None
+client: Optional[AsyncIOMotorClient] = None
 
 
 async def connect_db():

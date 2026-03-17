@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function NavBar({ title, backTo }: Props) {
-  const { user, logout } = useAuth()
+  const { user, logout, isTeacher } = useAuth()
   return (
     <nav className={styles.nav}>
       <div className={styles.left}>
@@ -22,6 +22,7 @@ export default function NavBar({ title, backTo }: Props) {
         <Link to="/editor" className={styles.link}>编辑器</Link>
         {user ? (
           <>
+            {isTeacher && <Link to="/admin" className={styles.link}>管理</Link>}
             <span className={styles.user}>👤 {user.username}</span>
             <button className={styles.logoutBtn} onClick={logout}>退出</button>
           </>

@@ -5,19 +5,21 @@ from core.auth import get_current_user
 
 router = APIRouter(prefix="/api/courses", tags=["courses"])
 
-
+# 将 MongoDB 文档 中的 _id 字段转换为普通的 id 字段（字符串类型）
 def fmt(doc) -> dict:
     doc["id"] = str(doc.pop("_id"))
     return doc
 
 
+# 课程列表查询
 @router.get("")
 async def list_courses():
     db = get_db()
+    # 查询所有课程
     courses = await db.courses.find({}, {"lessons": 0}).to_list(100)
     for c in courses:
         c["id"] = str(c.pop("_id"))
-        c["lesson_count"] = c.get("lesson_count", 0)
+        c["lesson_count"] = c.get("lesson_count", 0)    # 没有该字段，默认为 0 
     return courses
 
 

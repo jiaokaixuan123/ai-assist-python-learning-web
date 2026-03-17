@@ -6,14 +6,16 @@ interface User {
   username: string
   email?: string
   avatar?: string
+  role: 'student' | 'teacher'
 }
 
 interface AuthContextType {
   user: User | null
   loading: boolean
   login: (username: string, password: string) => Promise<void>
-  register: (username: string, password: string, email?: string) => Promise<void>
+  register: (username: string, password: string, email?: string, role?: 'student' | 'teacher') => Promise<void>
   logout: () => void
+  isTeacher: boolean
 }
 
 const AuthContext = createContext<AuthContextType>(null!)
@@ -41,8 +43,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(me.data)
   }
 
-  const register = async (username: string, password: string, email?: string) => {
-    const { data } = await authApi.register(username, password, email)
+  const register = async (username: string, password: string, email?: string, role: 'student' | 'teacher' = 'student') => {
+    const { data } = await authApi.register(username, password, email, role)
     localStorage.setItem('token', data.access_token)
     const me = await authApi.me()
     setUser(me.data)
@@ -54,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, isTeacher: user?.role === 'teacher' }}>
       {children}
     </AuthContext.Provider>
   )

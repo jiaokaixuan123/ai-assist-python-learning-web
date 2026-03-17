@@ -6,6 +6,7 @@ from core.auth import get_current_user
 router = APIRouter(prefix="/api/progress", tags=["progress"])
 
 
+# 学习进展
 @router.get("/me")
 async def get_progress(current_user: dict = Depends(get_current_user)):
     db = get_db()
@@ -17,6 +18,7 @@ async def get_progress(current_user: dict = Depends(get_current_user)):
     return progress
 
 
+# 完成课程/练习
 @router.post("/complete")
 async def mark_complete(body: dict, current_user: dict = Depends(get_current_user)):
     db = get_db()

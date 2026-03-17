@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from bson import ObjectId
 from datetime import datetime
+from typing import Optional
 from core.database import get_db
 from core.auth import get_current_user
 from models.exercise import SubmissionIn
@@ -13,8 +14,9 @@ def fmt(doc) -> dict:
     return doc
 
 
+# 获取练习列表
 @router.get("")
-async def list_exercises(difficulty: str = None, tag: str = None):
+async def list_exercises(difficulty: Optional[str] = None, tag: Optional[str] = None):
     db = get_db()
     query = {}
     if difficulty:
@@ -39,6 +41,7 @@ async def get_exercise(exercise_id: str):
     return fmt(doc)
 
 
+# 提交练习
 @router.post("/submissions")
 async def submit(body: SubmissionIn, current_user: dict = Depends(get_current_user)):
     db = get_db()

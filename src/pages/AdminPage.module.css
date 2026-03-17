@@ -1,0 +1,239 @@
+.page {
+  min-height: 100vh;
+  background: #0d1117;
+  color: #e6edf3;
+  display: flex;
+  flex-direction: column;
+}
+
+.toast {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #161b22;
+  border: 1px solid #30363d;
+  color: #e6edf3;
+  padding: 10px 24px;
+  border-radius: 8px;
+  z-index: 100;
+  font-size: 14px;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  gap: 0;
+}
+
+.sidebar {
+  width: 200px;
+  background: #161b22;
+  border-right: 1px solid #30363d;
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sideTitle {
+  font-size: 12px;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  padding: 0 8px;
+}
+
+.sideBtn {
+  background: none;
+  border: none;
+  color: #8b949e;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sideBtn:hover { background: #21262d; color: #e6edf3; }
+.sideBtn.active { background: #21262d; color: #58a6ff; }
+
+.main {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e6edf3;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #30363d;
+}
+
+.subTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #8b949e;
+  margin: 16px 0 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 32px;
+  font-size: 14px;
+}
+
+.table th {
+  text-align: left;
+  padding: 8px 12px;
+  background: #161b22;
+  color: #8b949e;
+  border-bottom: 1px solid #30363d;
+  font-weight: 500;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #21262d;
+  color: #e6edf3;
+}
+
+.table tr:hover td { background: #161b22; }
+
+.editingRow td { background: #1f2d3d !important; }
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.formActions {
+  display: flex;
+  gap: 8px;
+}
+
+.btnEdit {
+  background: none;
+  border: 1px solid #58a6ff;
+  color: #58a6ff;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.15s;
+}
+
+.btnEdit:hover { background: rgba(88, 166, 255, 0.1); }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 640px;
+  margin-bottom: 40px;
+}
+
+.input {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #e6edf3;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input:focus { border-color: #58a6ff; }
+
+.textarea {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #e6edf3;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: 'Consolas', monospace;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.15s;
+}
+
+.textarea:focus { border-color: #58a6ff; }
+
+.select {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #e6edf3;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+.testCase {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+}
+
+.tcLabel {
+  font-size: 12px;
+  color: #8b949e;
+  font-weight: 600;
+}
+
+.btnPrimary {
+  background: #238636;
+  border: 1px solid #2ea043;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s;
+  align-self: flex-start;
+}
+
+.btnPrimary:hover { background: #2ea043; }
+
+.btnSecondary {
+  background: #21262d;
+  border: 1px solid #30363d;
+  color: #e6edf3;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s;
+  align-self: flex-start;
+}
+
+.btnSecondary:hover { background: #30363d; }
+
+.btnDanger {
+  background: none;
+  border: 1px solid #f85149;
+  color: #f85149;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  align-self: flex-start;
+  transition: background 0.15s;
+}
+
+.btnDanger:hover { background: rgba(248, 81, 73, 0.1); }

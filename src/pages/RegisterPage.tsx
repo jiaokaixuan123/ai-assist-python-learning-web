@@ -9,6 +9,7 @@ export default function RegisterPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+  const [role, setRole] = useState<'student' | 'teacher'>('student')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -18,7 +19,7 @@ export default function RegisterPage() {
     if (password.length < 6) { setError('密码至少 6 位'); return }
     setLoading(true)
     try {
-      await register(username, password, email || undefined)
+      await register(username, password, email || undefined, role)
       navigate('/')
     } catch (err: any) {
       setError(err.response?.data?.detail || '注册失败')
@@ -65,6 +66,13 @@ export default function RegisterPage() {
               onChange={e => setEmail(e.target.value)}
               placeholder="your@email.com"
             />
+          </div>
+          <div className={styles.field}>
+            <label>身份</label>
+            <select value={role} onChange={e => setRole(e.target.value as 'student' | 'teacher')}>
+              <option value="student">学生</option>
+              <option value="teacher">教师</option>
+            </select>
           </div>
           {error && <p className={styles.error}>{error}</p>}
           <button type="submit" className={styles.btn} disabled={loading}>
