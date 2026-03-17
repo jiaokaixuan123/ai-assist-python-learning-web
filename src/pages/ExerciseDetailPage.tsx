@@ -92,15 +92,50 @@ export default function ExerciseDetailPage() {
     setAiOutput('')
 
     const caseResults: CaseResult[] = []
+
+    // 第一步：执行用户代码，定义函数
+    const defineResult = await run(code)
+    if (defineResult.error) {
+      // 代码本身有语法错误
+      setResults(exercise.test_cases.map(tc => ({
+        input: tc.input, expected: tc.expected_output,
+        actual: defineResult.error ?? '', passed: false
+      })))
+      setAllPassed(false)
+      setSubmitted(true)
+      setJudging(false)
+      return
+    }
+
+    // 第二步：提取函数名，逐个测试用例调用
+    const funcNameMatch = code.match(/^def\s+(\w+)\s*\(/m)
+    const funcName = funcNameMatch?.[1]
+
     for (const tc of exercise.test_cases) {
-      // 构造：将 stdin 输入通过 sys.stdin 模拟注入
-      const wrappedCode = tc.input
-        ? `import sys\nsys.stdin = __import__('io').StringIO(${JSON.stringify(tc.input + '\n')})\n${code}`
-        : code
-      const { result, error } = await run(wrappedCode)
-      const actual = (error ?? result ?? '').trim()
-      const expected = tc.expected_output.trim()
-      caseResults.push({ input: tc.input, expected, actual, passed: actual === expected })
+      let actual = ''
+      let passed = false
+
+      if (funcName) {
+        // 用测试用例 input 作为参数调用函数，比较返回值
+        const callCode = `${code}\n_result = ${funcName}(${tc.input})\nprint(repr(_result))`
+        const { result, error } = await run(callCode)
+        if (error) {
+          actual = error.trim()
+          passed = false
+        } else {
+          actual = (result ?? '').trim()
+          // 比较 repr 字符串（支持数字、字符串、列表、字典等）
+          const expectedRepr = tc.expected_output.trim()
+          passed = actual === expectedRepr
+        }
+      } else {
+        // 没有函数定义，退回 stdout 比较
+        const { result, error } = await run(code)
+        actual = (error ?? result ?? '').trim()
+        passed = actual === tc.expected_output.trim()
+      }
+
+      caseResults.push({ input: tc.input, expected: tc.expected_output.trim(), actual, passed })
     }
 
     setResults(caseResults)
@@ -109,7 +144,6 @@ export default function ExerciseDetailPage() {
     setSubmitted(true)
     setJudging(false)
 
-    // 提交记录到后端
     if (user) {
       exerciseApi.submit({
         exercise_id: exercise.id,
@@ -244,7 +278,7 @@ export default function ExerciseDetailPage() {
             <div className={`${styles.resultBanner} ${allPassed ? styles.bannerPass : styles.bannerFail}`}>
               {allPassed
                 ? '🎉 恭喜！全部测试用例通过！'
-                : `还有 ${results.filter(r => !r.passed).length} 个用例未通过，继���加油！`
+                : `还有 ${results.filter(r => !r.passed).length} 个用例未通过，继续加油！`
               }
             </div>
           )}

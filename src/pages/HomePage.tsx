@@ -32,7 +32,7 @@ const DIFF_COLOR: Record<string, string> = {
 }
 
 export default function HomePage() {
-  const { user, logout } = useAuth()
+  const { user, logout, isTeacher } = useAuth()
   const navigate = useNavigate()
   const [courses, setCourses] = useState<Course[]>([])
   const [progress, setProgress] = useState<Progress | null>(null)
@@ -58,6 +58,7 @@ export default function HomePage() {
           <Link to="/courses" className={styles.navLink}>课程</Link>
           <Link to="/exercises" className={styles.navLink}>练习</Link>
           <Link to="/editor" className={styles.navLink}>代码编辑器</Link>
+          {isTeacher && <Link to="/admin" className={styles.navLink}>管理</Link>}
           {user ? (
             <div className={styles.userArea}>
               <span className={styles.username}>👤 {user.username}</span>
@@ -158,7 +159,7 @@ export default function HomePage() {
       </section>
 
       <footer className={styles.footer}>
-        <p>© 2025 Python 学习平台 · 为计算机设计大赛而生</p>
+        <p>© 2025 Python 学习平台</p>
       </footer>
     </div>
   )
