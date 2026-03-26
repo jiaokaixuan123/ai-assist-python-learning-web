@@ -1,8 +1,23 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { adminApi, courseApi, exerciseApi } from '../api'
 import { useAuth } from '../contexts/AuthContext'
 import NavBar from '../components/learn/NavBar'
 import styles from './AdminPage.module.css'
+
+function MdPreview({ value }: { value: string }) {
+  return (
+    <div className={styles.splitPreview}>
+      <div className={styles.splitPreviewTitle}>预览</div>
+      <div className={styles.mdPreview}>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {value || '*（预览区域为空）*'}
+        </ReactMarkdown>
+      </div>
+    </div>
+  )
+}
 
 type Tab = 'courses' | 'exercises' | 'users'
 
@@ -33,6 +48,8 @@ export default function AdminPage() {
   const [users, setUsers] = useState<UserItem[]>([])
   const [msg, setMsg] = useState('')
 
+  const importFileRef = useRef<HTMLInputElement>(null)
+
   // 编辑状态
   const [editingCourse, setEditingCourse] = useState<Course | null>(null)
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null)
@@ -54,6 +71,32 @@ export default function AdminPage() {
   }, [])
 
   const notify = (m: string) => { setMsg(m); setTimeout(() => setMsg(''), 3000) }
+
+  const handleImportExercises = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = async (ev) => {
+      try {
+        const list = JSON.parse(ev.target?.result as string)
+        if (!Array.isArray(list)) throw new Error('格式错误：顶层应为数组')
+        let ok = 0, fail = 0
+        for (const item of list) {
+          try {
+            const { test_cases = [], ...rest } = item
+            await exerciseApi.create({ exercise: rest, test_cases })
+            ok++
+          } catch { fail++ }
+        }
+        notify(`✅ 导入完成：成功 ${ok} 条${fail ? `，失败 ${fail} 条` : ''}`)
+        refreshExercises()
+      } catch (err: any) {
+        notify(`❌ 解析失败：${err.message}`)
+      }
+      if (importFileRef.current) importFileRef.current.value = ''
+    }
+    reader.readAsText(file)
+  }
 
   const handleUpdateRole = async (id: string, role: 'student' | 'teacher') => {
     try {
@@ -279,11 +322,15 @@ export default function AdminPage() {
               <h2 className={styles.sectionTitle}>
                 {editingCourse ? `编辑课程：${editingCourse.title}` : '新建课程'}
               </h2>
-              <div className={styles.form}>
+              <div className={styles.formSplit}>
+                <div className={styles.formLeft}>
                 <input className={styles.input} placeholder="课程标题 *"
                   value={courseForm.title} onChange={e => setCourseForm(f => ({ ...f, title: e.target.value }))} />
-                <textarea className={styles.textarea} placeholder="课程描述"
-                  value={courseForm.description} onChange={e => setCourseForm(f => ({ ...f, description: e.target.value }))} />
+                <label className={styles.fieldLabel}>课程描述（Markdown）</label>
+                <textarea className={styles.textarea} rows={8}
+                  placeholder="支持 Markdown"
+                  value={courseForm.description}
+                  onChange={e => setCourseForm(f => ({ ...f, description: e.target.value }))} />
                 <select className={styles.select}
                   value={courseForm.difficulty} onChange={e => setCourseForm(f => ({ ...f, difficulty: e.target.value }))}>
                   <option value="beginner">入门</option>
@@ -302,6 +349,8 @@ export default function AdminPage() {
                     <button type="button" className={styles.btnSecondary} onClick={cancelEditCourse}>取消</button>
                   )}
                 </div>
+                </div>
+                <MdPreview value={courseForm.description} />
               </div>
 
               {/* ── 章节管理（仅编辑课程时显示）── */}
@@ -327,13 +376,17 @@ export default function AdminPage() {
                   </table>
 
                   <h3 className={styles.subTitle}>{editingLesson ? `编辑章节：${editingLesson.title}` : '新增章节'}</h3>
-                  <div className={styles.form}>
+                  <div className={styles.formSplit}>
+                    <div className={styles.formLeft}>
                     <input className={styles.input} placeholder="章节 ID（唯一标识，如 lesson_1）*"
                       value={lessonForm.id} onChange={e => setLessonForm(f => ({ ...f, id: e.target.value }))} />
                     <input className={styles.input} placeholder="章节标题 *"
                       value={lessonForm.title} onChange={e => setLessonForm(f => ({ ...f, title: e.target.value }))} />
-                    <textarea className={styles.textarea} placeholder="章节内容（支持 Markdown）*" rows={10}
-                      value={lessonForm.content} onChange={e => setLessonForm(f => ({ ...f, content: e.target.value }))} />
+                    <label className={styles.fieldLabel}>章节内容（Markdown）*</label>
+                    <textarea className={styles.textarea} rows={12}
+                      placeholder="支持 Markdown"
+                      value={lessonForm.content}
+                      onChange={e => setLessonForm(f => ({ ...f, content: e.target.value }))} />
                     <textarea className={styles.textarea} placeholder="初始代码（可选）" rows={4}
                       value={lessonForm.starter_code} onChange={e => setLessonForm(f => ({ ...f, starter_code: e.target.value }))} />
                     <input className={styles.input} type="number" placeholder="排序（数字越小越靠前）"
@@ -346,6 +399,8 @@ export default function AdminPage() {
                         <button type="button" className={styles.btnSecondary} onClick={cancelEditLesson}>取消</button>
                       )}
                     </div>
+                    </div>
+                    <MdPreview value={lessonForm.content} />
                   </div>
                 </div>
               )}
@@ -355,7 +410,14 @@ export default function AdminPage() {
           {/* ── 练习管理 ── */}
           {tab === 'exercises' && (
             <div>
-              <h2 className={styles.sectionTitle}>练习列表 ({exercises.length})</h2>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>练习列表 ({exercises.length})</h2>
+                <label className={styles.btnImport}>
+                  📥 批量导入 JSON
+                  <input ref={importFileRef} type="file" accept=".json" style={{ display: 'none' }}
+                    onChange={handleImportExercises} />
+                </label>
+              </div>
               <table className={styles.table}>
                 <thead>
                   <tr><th>标题</th><th>难度</th><th>标签</th><th>操作</th></tr>
@@ -378,11 +440,15 @@ export default function AdminPage() {
               <h2 className={styles.sectionTitle}>
                 {editingExercise ? `编辑练习：${editingExercise.title}` : '新建练习题'}
               </h2>
-              <div className={styles.form}>
+              <div className={styles.formSplit}>
+                <div className={styles.formLeft}>
                 <input className={styles.input} placeholder="题目标题 *"
                   value={exForm.title} onChange={e => setExForm(f => ({ ...f, title: e.target.value }))} />
-                <textarea className={styles.textarea} placeholder="题目描述（支持 Markdown）*" rows={6}
-                  value={exForm.description} onChange={e => setExForm(f => ({ ...f, description: e.target.value }))} />
+                <label className={styles.fieldLabel}>题目描述（Markdown）*</label>
+                <textarea className={styles.textarea} rows={8}
+                  placeholder="支持 Markdown"
+                  value={exForm.description}
+                  onChange={e => setExForm(f => ({ ...f, description: e.target.value }))} />
                 <select className={styles.select}
                   value={exForm.difficulty} onChange={e => setExForm(f => ({ ...f, difficulty: e.target.value }))}>
                   <option value="easy">简单</option>
@@ -418,6 +484,8 @@ export default function AdminPage() {
                     <button type="button" className={styles.btnSecondary} onClick={cancelEditExercise}>取消</button>
                   )}
                 </div>
+                </div>
+                <MdPreview value={exForm.description} />
               </div>
             </div>
           )}

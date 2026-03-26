@@ -237,3 +237,189 @@
 }
 
 .btnDanger:hover { background: rgba(248, 81, 73, 0.1); }
+
+/* ── 左右分栏表单 ── */
+.formSplit {
+  display: flex;
+  gap: 0;
+  min-height: 400px;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.formLeft {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 16px;
+  border-right: 1px solid #30363d;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.splitPreview {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.splitPreviewTitle {
+  font-size: 12px;
+  color: #8b949e;
+  padding: 8px 14px;
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  color: #8b949e;
+  margin-bottom: 4px;
+  display: block;
+}
+.mdEditor {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.mdToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+}
+
+.mdLabel {
+  font-size: 12px;
+  color: #8b949e;
+}
+
+.mdHint {
+  font-size: 11px;
+  color: #484f58;
+}
+
+.mdPanes {
+  display: flex;
+  min-height: 200px;
+}
+
+.mdTextarea {
+  flex: 1;
+  background: #0d1117;
+  color: #e6edf3;
+  border: none;
+  border-right: 1px solid #30363d;
+  padding: 10px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  resize: vertical;
+  outline: none;
+}
+
+.mdPreview {
+  flex: 1;
+  padding: 14px 16px;
+  overflow-y: auto;
+  background: #0d1117;
+  color: #e6edf3;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.mdPreview h1, .mdPreview h2, .mdPreview h3 {
+  color: #e6edf3;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 4px;
+  margin: 12px 0 6px;
+}
+
+.mdPreview code {
+  background: #161b22;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+
+.mdPreview pre {
+  background: #161b22;
+  padding: 10px 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.mdPreview pre code {
+  background: none;
+  padding: 0;
+}
+
+.mdPreview a { color: #58a6ff; }
+.mdPreview ul, .mdPreview ol { padding-left: 20px; }
+.mdPreview blockquote {
+  border-left: 3px solid #30363d;
+  margin: 0;
+  padding-left: 12px;
+  color: #8b949e;
+}
+
+.mdPreview {
+  flex: 1;
+  padding: 10px 14px;
+  overflow-y: auto;
+  background: #0d1117;
+  border-left: 1px solid #30363d;
+  font-size: 13px;
+  color: #e6edf3;
+  line-height: 1.6;
+}
+
+.mdPreview h1, .mdPreview h2, .mdPreview h3 { color: #f0f6fc; margin: 0.6em 0 0.3em; }
+.mdPreview code { background: #161b22; padding: 1px 5px; border-radius: 3px; font-family: monospace; }
+.mdPreview pre { background: #161b22; padding: 10px; border-radius: 6px; overflow-x: auto; }
+.mdPreview pre code { background: none; padding: 0; }
+.mdPreview a { color: #58a6ff; }
+.mdPreview ul, .mdPreview ol { padding-left: 1.4em; }
+
+/* ── 练习批量导入 ── */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #30363d;
+}
+
+.sectionHeader .sectionTitle {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.btnImport {
+  background: #1f6feb;
+  border: 1px solid #388bfd;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btnImport:hover { background: #388bfd; }

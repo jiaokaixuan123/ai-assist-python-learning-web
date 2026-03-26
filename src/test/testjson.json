@@ -1,0 +1,13 @@
+[
+  {
+    "title": "两数之和（2）",
+    "description": "输出 a+b",
+    "difficulty": "easy",
+    "tags": ["基础"],
+    "starter_code": "",
+    "hint": "",
+    "test_cases": [
+      { "input": "1 2", "expected_output": "3" }
+    ]
+  }
+]
