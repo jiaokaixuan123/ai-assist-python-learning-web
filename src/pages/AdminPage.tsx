@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { adminApi, courseApi, exerciseApi } from '../api'
+import { adminApi, courseApi, exerciseApi, bookApi } from '../api'
 import { useAuth } from '../contexts/AuthContext'
 import NavBar from '../components/learn/NavBar'
 import styles from './AdminPage.module.css'
@@ -19,12 +19,13 @@ function MdPreview({ value }: { value: string }) {
   )
 }
 
-type Tab = 'courses' | 'exercises' | 'users'
+type Tab = 'courses' | 'exercises' | 'users' | 'books'
 
 interface Lesson { id: string; title: string; content: string; starter_code?: string; order: number }
 interface Course { id: string; title: string; description: string; difficulty: string; tags: string[]; lesson_count: number; cover?: string; lessons?: Lesson[] }
 interface Exercise { id: string; title: string; description: string; difficulty: string; tags: string[]; starter_code?: string; hint?: string; test_cases: { input: string; expected_output: string }[] }
 interface UserItem { id: string; username: string; email?: string; role: string; created_at: string }
+interface Book { id: string; title: string; author?: string; description?: string; difficulty?: string; tags: string[]; file_url: string; file_type: string; indexed: boolean; created_at: string }
 
 const emptyExForm = () => ({
   title: '', description: '', difficulty: 'easy',
@@ -46,14 +47,17 @@ export default function AdminPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [users, setUsers] = useState<UserItem[]>([])
+  const [books, setBooks] = useState<Book[]>([])
   const [msg, setMsg] = useState('')
 
   const importFileRef = useRef<HTMLInputElement>(null)
+  const bookFileRef = useRef<HTMLInputElement>(null)
 
   // 编辑状态
   const [editingCourse, setEditingCourse] = useState<Course | null>(null)
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null)
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null)
+  const [bookForm, setBookForm] = useState({ title: '', author: '', description: '', difficulty: 'beginner', tags: '' })
 
   // 表单状态
   const [courseForm, setCourseForm] = useState(emptyCourseForm())
@@ -63,11 +67,13 @@ export default function AdminPage() {
   const refreshCourses = () => courseApi.list().then(r => setCourses(r.data))
   const refreshExercises = () => exerciseApi.list().then(r => setExercises(r.data))
   const refreshUsers = () => adminApi.listUsers().then(r => setUsers(r.data))
+  const refreshBooks = () => bookApi.list().then(r => setBooks(r.data))
 
   useEffect(() => {
     refreshCourses()
     refreshExercises()
     refreshUsers()
+    refreshBooks()
   }, [])
 
   const notify = (m: string) => { setMsg(m); setTimeout(() => setMsg(''), 3000) }
@@ -276,6 +282,36 @@ export default function AdminPage() {
       test_cases: f.test_cases.map((tc, idx) => idx === i ? { ...tc, [field]: val } : tc)
     }))
 
+  const handleUploadBook = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const file = bookFileRef.current?.files?.[0]
+    if (!file) { notify('❌ 请选择文件'); return }
+    if (!bookForm.title.trim()) { notify('❌ 请填写书名'); return }
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('title', bookForm.title)
+    fd.append('author', bookForm.author)
+    fd.append('description', bookForm.description)
+    fd.append('difficulty', bookForm.difficulty)
+    fd.append('tags', bookForm.tags)
+    try {
+      await bookApi.create(fd)
+      notify('✅ 书籍上传成功')
+      setBookForm({ title: '', author: '', description: '', difficulty: 'beginner', tags: '' })
+      if (bookFileRef.current) bookFileRef.current.value = ''
+      refreshBooks()
+    } catch { notify('❌ 上传失败') }
+  }
+
+  const handleDeleteBook = async (id: string, title: string) => {
+    if (!confirm(`确定删除书籍「${title}」？`)) return
+    try {
+      await bookApi.delete(id)
+      notify('✅ 书籍已删除')
+      refreshBooks()
+    } catch { notify('❌ 删除失败') }
+  }
+
   return (
     <div className={styles.page}>
       <NavBar title="管理后台" backTo="/" />
@@ -284,12 +320,12 @@ export default function AdminPage() {
       <div className={styles.body}>
         <aside className={styles.sidebar}>
           <h2 className={styles.sideTitle}>管理</h2>
-          {(['courses', 'exercises', 'users'] as Tab[]).map(t => (
+          {(['courses', 'exercises', 'users', 'books'] as Tab[]).map(t => (
             <button key={t}
               className={`${styles.sideBtn} ${tab === t ? styles.active : ''}`}
               onClick={() => { setTab(t); cancelEditCourse(); cancelEditExercise() }}
             >
-              {t === 'courses' ? '📚 课程管理' : t === 'exercises' ? '🧩 练习管理' : '👥 用户管理'}
+              {t === 'courses' ? '📚 课程管理' : t === 'exercises' ? '🧩 练习管理' : t === 'users' ? '👥 用户管理' : '📖 书籍管理'}
             </button>
           ))}
         </aside>
@@ -513,6 +549,61 @@ export default function AdminPage() {
                       <td className={styles.actions}>
                         <button type="button" className={styles.btnDanger}
                           onClick={() => handleDeleteUser(u.id, u.username)}>删除</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ── 书籍管理 ── */}
+          {tab === 'books' && (
+            <div>
+              <h2 className={styles.sectionTitle}>书籍管理</h2>
+
+              {/* 上传表单 */}
+              <div className={styles.formCard}>
+                <h3 className={styles.formTitle}>上传书籍</h3>
+                <input className={styles.input} placeholder="书名 *"
+                  value={bookForm.title} onChange={e => setBookForm(f => ({ ...f, title: e.target.value }))} />
+                <input className={styles.input} placeholder="作者（可选）"
+                  value={bookForm.author} onChange={e => setBookForm(f => ({ ...f, author: e.target.value }))} />
+                <textarea className={styles.textarea} placeholder="简介（可选）" rows={3}
+                  value={bookForm.description} onChange={e => setBookForm(f => ({ ...f, description: e.target.value }))} />
+                <select className={styles.select} aria-label="书籍难度"
+                  value={bookForm.difficulty} onChange={e => setBookForm(f => ({ ...f, difficulty: e.target.value }))}>
+                  <option value="beginner">入门</option>
+                  <option value="intermediate">进阶</option>
+                  <option value="advanced">高级</option>
+                </select>
+                <input className={styles.input} placeholder="标签（逗号分隔）"
+                  value={bookForm.tags} onChange={e => setBookForm(f => ({ ...f, tags: e.target.value }))} />
+                <input type="file" accept=".pdf,.epub,.txt" ref={bookFileRef}
+                  aria-label="选择书籍文件" title="选择书籍文件（PDF/EPUB/TXT）"
+                  className={styles.input} />
+                <button type="button" className={styles.btnPrimary} onClick={handleUploadBook}>上传书籍</button>
+              </div>
+
+              {/* 书籍列表 */}
+              <h3 className={`${styles.sectionTitle} ${styles.sectionTitleMt}`}>书籍列表 ({books.length})</h3>
+              <table className={styles.table}>
+                <thead>
+                  <tr><th>书名</th><th>作者</th><th>难度</th><th>文件类型</th><th>已索引</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                  {books.map(b => (
+                    <tr key={b.id}>
+                      <td>{b.title}</td>
+                      <td>{b.author || '-'}</td>
+                      <td>{b.difficulty || '-'}</td>
+                      <td>{b.file_type.toUpperCase()}</td>
+                      <td>{b.indexed ? '✅' : '—'}</td>
+                      <td className={styles.actions}>
+                        <a href={`http://localhost:8000${b.file_url}`} target="_blank" rel="noreferrer"
+                          className={styles.btnEdit}>预览</a>
+                        <button type="button" className={styles.btnDanger}
+                          onClick={() => handleDeleteBook(b.id, b.title)}>删除</button>
                       </td>
                     </tr>
                   ))}

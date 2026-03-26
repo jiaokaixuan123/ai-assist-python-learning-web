@@ -99,6 +99,15 @@ export const judgeApi = {
 }
 
 // ── Knowledge ─────────────────────────────────────────
+// ── Books ────────────────────────────────────────────
+export const bookApi = {
+  list: () => api.get('/api/books'),
+  get: (id: string) => api.get(`/api/books/${id}`),
+  create: (formData: FormData) => api.post('/api/books', formData),
+  update: (id: string, data: object) => api.put(`/api/books/${id}`, data),
+  delete: (id: string) => api.delete(`/api/books/${id}`),
+}
+
 export const knowledgeApi = {
   search: (query: string, top_k = 3) =>
     api.post('/api/knowledge/search', { query, top_k }),

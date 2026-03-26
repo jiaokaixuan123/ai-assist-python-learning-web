@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
+from pathlib import Path
 from core.database import connect_db, close_db
-from routers import auth, courses, exercises, progress, admin, judge, knowledge
+from routers import auth, courses, exercises, progress, admin, judge, knowledge, books
 
 
 @asynccontextmanager
@@ -29,6 +31,12 @@ app.include_router(progress.router)
 app.include_router(admin.router)
 app.include_router(judge.router)
 app.include_router(knowledge.router)
+app.include_router(books.router)
+
+# 静态文件服务（书籍文件下载/预览）
+uploads_dir = Path(__file__).parent / "uploads"
+uploads_dir.mkdir(exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
 
 
 @app.get("/")

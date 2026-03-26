@@ -10,6 +10,7 @@ import ExercisesPage from './pages/ExercisesPage'
 import ExerciseDetailPage from './pages/ExerciseDetailPage'
 import EditorPage from './pages/EditorPage'
 import AdminPage from './pages/AdminPage'
+import BooksPage from './pages/BooksPage'
 import AiTutor from './components/AiTutor/AiTutor'
 
 function TeacherRoute({ children }: { children: JSX.Element }) {
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/exercises" element={<ExercisesPage />} />
         <Route path="/exercises/:exerciseId" element={<ExerciseDetailPage />} />
         <Route path="/editor" element={<EditorPage />} />
+        <Route path="/books" element={<BooksPage />} />
         <Route path="/admin" element={<TeacherRoute><AdminPage /></TeacherRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

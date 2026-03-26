@@ -19,6 +19,7 @@ export default function NavBar({ title, backTo }: Props) {
         <Link to="/" className={styles.link}>首页</Link>
         <Link to="/courses" className={styles.link}>课程</Link>
         <Link to="/exercises" className={styles.link}>练习</Link>
+        <Link to="/books" className={styles.link}>书籍</Link>
         <Link to="/editor" className={styles.link}>编辑器</Link>
         {user ? (
           <>

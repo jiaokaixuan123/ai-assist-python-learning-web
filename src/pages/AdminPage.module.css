@@ -75,6 +75,11 @@
   border-bottom: 1px solid #30363d;
 }
 
+.sectionTitleMt {
+  margin-top: 2rem;
+}
+
+
 .subTitle {
   font-size: 14px;
   font-weight: 600;
