@@ -106,6 +106,8 @@ export const bookApi = {
   create: (formData: FormData) => api.post('/api/books', formData),
   update: (id: string, data: object) => api.put(`/api/books/${id}`, data),
   delete: (id: string) => api.delete(`/api/books/${id}`),
+  index: (id: string) => api.post(`/api/books/${id}/index`),
+  removeIndex: (id: string) => api.delete(`/api/books/${id}/index`),
 }
 
 export const knowledgeApi = {

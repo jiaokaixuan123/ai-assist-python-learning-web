@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
 import NavBar from '../components/learn/NavBar'
 import styles from './BooksPage.module.css'
 import { bookApi } from '../api'
@@ -21,10 +20,8 @@ const DIFF_LABEL: Record<string, string> = { beginner: '入门', intermediate: '
 const DIFF_COLOR: Record<string, string> = { beginner: '#3fb950', intermediate: '#d29922', advanced: '#f85149' }
 
 export default function BooksPage() {
-  const { user } = useAuth()
   const [books, setBooks] = useState<Book[]>([])
   const [filter, setFilter] = useState('all')
-  const [previewBook, setPreviewBook] = useState<Book | null>(null)
 
   useEffect(() => {
     bookApi.list().then(r => setBooks(r.data))
@@ -35,26 +32,6 @@ export default function BooksPage() {
   return (
     <div className={styles.page}>
       <NavBar title="教学书籍" backTo="/" />
-
-      {previewBook && (
-        <div className={styles.previewOverlay} onClick={() => setPreviewBook(null)}>
-          <div className={styles.previewModal} onClick={e => e.stopPropagation()}>
-            <div className={styles.previewHeader}>
-              <span>{previewBook.title}</span>
-              <button className={styles.closeBtn} onClick={() => setPreviewBook(null)}>✕</button>
-            </div>
-            {previewBook.file_path ? (
-              <iframe
-                src={`http://localhost:8000${previewBook.file_path}`}
-                className={styles.previewFrame}
-                title={previewBook.title}
-              />
-            ) : (
-              <div className={styles.noFile}>该书籍暂无可预览文件</div>
-            )}
-          </div>
-        </div>
-      )}
 
       <div className={styles.content}>
         <div className={styles.header}>
@@ -97,24 +74,16 @@ export default function BooksPage() {
                 {b.tags.map(t => <span key={t} className={styles.tag}>{t}</span>)}
               </div>
               <div className={styles.actions}>
-                {b.file_path && (
-                  <>
-                    <button
-                      className={styles.previewBtn}
-                      onClick={() => setPreviewBook(b)}
-                    >
-                      在线预览
-                    </button>
-                    <a
-                      href={`http://localhost:8000${b.file_path}`}
-                      download={b.file_name ?? undefined}
-                      className={styles.downloadBtn}
-                    >
-                      下载
-                    </a>
-                  </>
-                )}
-                {!b.file_path && (
+                {b.file_path ? (
+                  <a
+                    href={`http://localhost:8000${b.file_path}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.previewBtn}
+                  >
+                    在线预览
+                  </a>
+                ) : (
                   <span className={styles.noFileTip}>暂无文件</span>
                 )}
               </div>

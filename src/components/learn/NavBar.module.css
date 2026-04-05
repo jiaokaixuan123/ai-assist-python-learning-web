@@ -3,37 +3,79 @@
   align-items: center;
   justify-content: space-between;
   height: 52px;
-  padding: 0 20px;
-  background: #161b22;
+  padding: 0 24px;
+  background: rgba(13, 17, 23, 0.97);
   border-bottom: 1px solid #21262d;
   flex-shrink: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
-.left { display: flex; align-items: center; gap: 16px; }
+
+/* 左侧：logo + 面包屑 */
+.left { display: flex; align-items: center; gap: 10px; }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.brandLogo { font-size: 20px; line-height: 1; }
+.brandName {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e6edf3;
+  white-space: nowrap;
+}
+
+.divider {
+  color: #30363d;
+  font-size: 16px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .back {
   color: #8b949e;
   text-decoration: none;
   font-size: 13px;
-  padding: 4px 10px;
+  padding: 3px 9px;
   border: 1px solid #30363d;
   border-radius: 6px;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 .back:hover { color: #e6edf3; border-color: #8b949e; }
+
 .title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: #e6edf3;
+  color: #8b949e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
 }
-.right { display: flex; align-items: center; gap: 16px; }
+
+/* 右侧：导航链接 + 用户区 */
+.right { display: flex; align-items: center; gap: 18px; }
+
 .link {
   color: #8b949e;
   text-decoration: none;
   font-size: 13px;
   transition: color 0.2s;
+  white-space: nowrap;
 }
 .link:hover { color: #e6edf3; }
-.user { font-size: 13px; color: #c9d1d9; }
+
+.user { font-size: 13px; color: #c9d1d9; white-space: nowrap; }
+
 .logoutBtn {
   background: none;
   border: 1px solid #30363d;
@@ -43,10 +85,27 @@
   font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 .logoutBtn:hover { border-color: #f85149; color: #f85149; }
+
 .loginLink {
-  color: #388bfd;
+  color: #8b949e;
   text-decoration: none;
   font-size: 13px;
+  transition: color 0.2s;
 }
+.loginLink:hover { color: #e6edf3; }
+
+.registerBtn {
+  background: #238636;
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.registerBtn:hover { background: #2ea043; }

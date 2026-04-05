@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install react-markdown remark-gfm rehype-highlight)"
+      "Bash(npm install react-markdown remark-gfm rehype-highlight)",
+      "Bash(.venv\\\\Scripts\\\\pip list:*)",
+      "Bash(findstr /i \"pymupdf fitz ebooklib chromadb sentence\")",
+      "Bash(.venv/Scripts/pip list:*)",
+      "Bash(.venv/Scripts/pip install:*)"
     ]
   }
 }

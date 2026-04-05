@@ -25,7 +25,7 @@ interface Lesson { id: string; title: string; content: string; starter_code?: st
 interface Course { id: string; title: string; description: string; difficulty: string; tags: string[]; lesson_count: number; cover?: string; lessons?: Lesson[] }
 interface Exercise { id: string; title: string; description: string; difficulty: string; tags: string[]; starter_code?: string; hint?: string; test_cases: { input: string; expected_output: string }[] }
 interface UserItem { id: string; username: string; email?: string; role: string; created_at: string }
-interface Book { id: string; title: string; author?: string; description?: string; difficulty?: string; tags: string[]; file_url: string; file_type: string; indexed: boolean; created_at: string }
+interface Book { id: string; title: string; author?: string; description?: string; difficulty?: string; tags: string[]; file_path: string | null; file_name: string | null; indexed: boolean; chunk_count?: number; created_at: string }
 
 const emptyExForm = () => ({
   title: '', description: '', difficulty: 'easy',
@@ -90,9 +90,9 @@ export default function AdminPage() {
         for (const item of list) {
           try {
             const { test_cases = [], ...rest } = item
-            await exerciseApi.create({ exercise: rest, test_cases })
+            await adminApi.createExercise({ exercise: rest, test_cases })
             ok++
-          } catch { fail++ }
+          } catch (_) { fail++ }
         }
         notify(`✅ 导入完成：成功 ${ok} 条${fail ? `，失败 ${fail} 条` : ''}`)
         refreshExercises()
@@ -312,6 +312,31 @@ export default function AdminPage() {
     } catch { notify('❌ 删除失败') }
   }
 
+  const [indexingId, setIndexingId] = useState<string | null>(null)
+
+  const handleIndexBook = async (id: string, title: string) => {
+    if (!confirm(`对「${title}」建立 RAG 索引？\n\n首次索引较慢（需加载嵌入模型），请耐心等待。`)) return
+    setIndexingId(id)
+    try {
+      const res = await bookApi.index(id)
+      notify(`✅ ${res.data.message}`)
+      refreshBooks()
+    } catch (err: any) {
+      notify(`❌ 索引失败：${err?.response?.data?.detail ?? err.message}`)
+    } finally {
+      setIndexingId(null)
+    }
+  }
+
+  const handleRemoveIndex = async (id: string, title: string) => {
+    if (!confirm(`确定清除「${title}」的向量索引？`)) return
+    try {
+      await bookApi.removeIndex(id)
+      notify('✅ 索引已清除')
+      refreshBooks()
+    } catch { notify('❌ 操作失败') }
+  }
+
   return (
     <div className={styles.page}>
       <NavBar title="管理后台" backTo="/" />
@@ -367,7 +392,7 @@ export default function AdminPage() {
                   placeholder="支持 Markdown"
                   value={courseForm.description}
                   onChange={e => setCourseForm(f => ({ ...f, description: e.target.value }))} />
-                <select className={styles.select}
+                <select className={styles.select} aria-label="课程难度"
                   value={courseForm.difficulty} onChange={e => setCourseForm(f => ({ ...f, difficulty: e.target.value }))}>
                   <option value="beginner">入门</option>
                   <option value="intermediate">进阶</option>
@@ -485,7 +510,7 @@ export default function AdminPage() {
                   placeholder="支持 Markdown"
                   value={exForm.description}
                   onChange={e => setExForm(f => ({ ...f, description: e.target.value }))} />
-                <select className={styles.select}
+                <select className={styles.select} aria-label="练习难度"
                   value={exForm.difficulty} onChange={e => setExForm(f => ({ ...f, difficulty: e.target.value }))}>
                   <option value="easy">简单</option>
                   <option value="medium">中等</option>
@@ -589,7 +614,7 @@ export default function AdminPage() {
               <h3 className={`${styles.sectionTitle} ${styles.sectionTitleMt}`}>书籍列表 ({books.length})</h3>
               <table className={styles.table}>
                 <thead>
-                  <tr><th>书名</th><th>作者</th><th>难度</th><th>文件类型</th><th>已索引</th><th>操作</th></tr>
+                  <tr><th>书名</th><th>作者</th><th>难度</th><th>类型</th><th>RAG 索引</th><th>操作</th></tr>
                 </thead>
                 <tbody>
                   {books.map(b => (
@@ -597,11 +622,32 @@ export default function AdminPage() {
                       <td>{b.title}</td>
                       <td>{b.author || '-'}</td>
                       <td>{b.difficulty || '-'}</td>
-                      <td>{b.file_type.toUpperCase()}</td>
-                      <td>{b.indexed ? '✅' : '—'}</td>
+                      <td>{b.file_name ? b.file_name.split('.').pop()?.toUpperCase() : '-'}</td>
+                      <td>
+                        {b.indexed
+                          ? <span className={styles.indexedBadge}>✅ {b.chunk_count ?? 0} 块</span>
+                          : <span className={styles.notIndexedBadge}>未索引</span>}
+                      </td>
                       <td className={styles.actions}>
-                        <a href={`http://localhost:8000${b.file_url}`} target="_blank" rel="noreferrer"
-                          className={styles.btnEdit}>预览</a>
+                        {b.file_path && (
+                          <a href={`http://localhost:8000${b.file_path}`} target="_blank" rel="noreferrer"
+                            className={styles.btnEdit}>预览</a>
+                        )}
+                        {b.file_path && !b.indexed && (
+                          <button type="button"
+                            className={styles.btnIndex}
+                            disabled={indexingId === b.id}
+                            onClick={() => handleIndexBook(b.id, b.title)}>
+                            {indexingId === b.id ? '⏳ 索引中…' : '🔍 建立索引'}
+                          </button>
+                        )}
+                        {b.indexed && (
+                          <button type="button"
+                            className={styles.btnSecondary}
+                            onClick={() => handleRemoveIndex(b.id, b.title)}>
+                            清除索引
+                          </button>
+                        )}
                         <button type="button" className={styles.btnDanger}
                           onClick={() => handleDeleteBook(b.id, b.title)}>删除</button>
                       </td>

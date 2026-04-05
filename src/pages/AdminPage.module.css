@@ -428,3 +428,30 @@
 }
 
 .btnImport:hover { background: #388bfd; }
+
+/* ── RAG 索引状态 ── */
+.indexedBadge {
+  color: #3fb950;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.notIndexedBadge {
+  color: #484f58;
+  font-size: 12px;
+}
+
+.btnIndex {
+  background: none;
+  border: 1px solid #d29922;
+  color: #d29922;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btnIndex:hover { background: rgba(210, 153, 34, 0.1); }
+.btnIndex:disabled { opacity: 0.5; cursor: not-allowed; }

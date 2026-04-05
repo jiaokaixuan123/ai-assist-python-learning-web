@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from pathlib import Path
 
 router = APIRouter(prefix="/api/knowledge", tags=["knowledge"])
 
@@ -7,12 +8,38 @@ router = APIRouter(prefix="/api/knowledge", tags=["knowledge"])
 _model = None
 _collection = None
 
+MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
+_HF_CACHE_SUBDIR = "models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2"
+
+
+def _find_local_model_path() -> str | None:
+    """返回本地 HuggingFace 缓存中最新快照路径，找不到返回 None"""
+    try:
+        from huggingface_hub import constants
+        cache_root = Path(constants.HF_HUB_CACHE)
+    except Exception:
+        cache_root = Path.home() / ".cache" / "huggingface" / "hub"
+
+    snaps_dir = cache_root / _HF_CACHE_SUBDIR / "snapshots"
+    if not snaps_dir.exists():
+        return None
+    snaps = sorted(snaps_dir.iterdir(), key=lambda p: p.stat().st_mtime, reverse=True)
+    for snap in snaps:
+        if (snap / "config.json").exists():
+            return str(snap)
+    return None
+
 
 def get_model():
     global _model
     if _model is None:
         from sentence_transformers import SentenceTransformer
-        _model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        local_path = _find_local_model_path()
+        if local_path:
+            # 直接加载本地快照，完全不联网
+            _model = SentenceTransformer(local_path)
+        else:
+            _model = SentenceTransformer(MODEL_NAME)
     return _model
 
 
@@ -22,10 +49,19 @@ def get_collection():
         import chromadb
         chroma_client = chromadb.PersistentClient(path="./chroma_db")
         try:
-            _collection = chroma_client.get_collection("course_knowledge")
-        except Exception:
-            raise HTTPException(500, "知识库未初始化，请先运行 build_knowledge_base.py")
+            _collection = chroma_client.get_or_create_collection("course_knowledge")
+        except Exception as e:
+            raise HTTPException(500, f"知识库初始化失败: {e}")
     return _collection
+
+
+def _format_source(meta: dict) -> str:
+    """统一格式化来源标签（兼容书籍和课程两种 metadata）"""
+    if meta.get("source_type") == "book":
+        author = f"·{meta['author']}" if meta.get("author") else ""
+        return f"📖 {meta.get('book_title', '书籍')}{author}"
+    # 兼容旧版课程 metadata
+    return f"📚 {meta.get('lesson_title', meta.get('book_title', '课程内容'))}"
 
 
 class SearchRequest(BaseModel):
@@ -33,22 +69,21 @@ class SearchRequest(BaseModel):
     top_k: int = 3
 
 
-class AskRequest(BaseModel):
-    question: str
-    api_key: str
-
-
 @router.post("/search")
 async def search_knowledge(req: SearchRequest):
-    """检索相关知识"""
+    """向量检索，返回最相关的知识片段"""
     model = get_model()
     collection = get_collection()
 
-    query_embedding = model.encode([req.query])[0].tolist()
+    # 集合为空时直接返回
+    if collection.count() == 0:
+        return {"query": req.query, "results": []}
 
+    query_embedding = model.encode([req.query])[0].tolist()
+    n = min(req.top_k, collection.count())
     results = collection.query(
         query_embeddings=[query_embedding],
-        n_results=req.top_k
+        n_results=n,
     )
 
     return {
@@ -57,55 +92,88 @@ async def search_knowledge(req: SearchRequest):
             {
                 "content": doc,
                 "metadata": meta,
-                "distance": dist
+                "source": _format_source(meta),
+                "distance": dist,
             }
             for doc, meta, dist in zip(
                 results["documents"][0],
                 results["metadatas"][0],
-                results["distances"][0]
+                results["distances"][0],
             )
-        ]
+        ],
     }
+
+
+class AskRequest(BaseModel):
+    question: str
+    api_key: str
+    model_name: str = "gpt-3.5-turbo"
 
 
 @router.post("/ask")
 async def ask_with_context(req: AskRequest):
-    """基于知识库回答问题"""
+    """RAG 问答：检索相关片段 → 构建 prompt → 调用大模型"""
     model = get_model()
     collection = get_collection()
 
+    if collection.count() == 0:
+        raise HTTPException(400, "知识库为空，请先在管理后台对书籍建立索引")
+
     # 1. 检索相关内容
     query_embedding = model.encode([req.question])[0].tolist()
-    results = collection.query(query_embeddings=[query_embedding], n_results=3)
+    n = min(3, collection.count())
+    results = collection.query(query_embeddings=[query_embedding], n_results=n)
 
-    context = "\n\n".join(results["documents"][0])
+    docs = results["documents"][0]
+    metas = results["metadatas"][0]
 
-    # 2. 构建 prompt
-    prompt = f"""基于以下课程内容回答问题：
+    # 2. 构建上下文，标注来源
+    context_parts = []
+    for doc, meta in zip(docs, metas):
+        source = _format_source(meta)
+        context_parts.append(f"[来源：{source}]\n{doc}")
+    context = "\n\n---\n\n".join(context_parts)
 
+    # 3. 构建 prompt
+    prompt = f"""你是一个专业的 Python 编程助教。请基于以下教材内容回答学生的问题。
+回答要求：
+- 优先引用教材中的内容和例子
+- 语言简洁易懂，适当给出可运行的代码示例
+- 如果教材内容不足以回答，可以补充自己的知识，但要注明
+
+【参考教材内容】
 {context}
 
-问题：{req.question}
+【学生问题】
+{req.question}"""
 
-请用简洁易懂的语言回答，并给出代码示例。"""
-
-    # 3. 调用大模型（示例使用 OpenAI API）
+    # 4. 调用大模型
     try:
         from openai import OpenAI
         client = OpenAI(api_key=req.api_key)
-
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
+            model=req.model_name,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.4,
         )
-
         answer = response.choices[0].message.content
     except ImportError:
         raise HTTPException(500, "OpenAI 库未安装，请运行: pip install openai")
     except Exception as e:
-        raise HTTPException(500, f"调用 OpenAI API 失败: {str(e)}")
+        raise HTTPException(500, f"调用模型失败: {str(e)}")
 
     return {
         "answer": answer,
-        "sources": [m["lesson_title"] for m in results["metadatas"][0]]
+        "sources": [_format_source(m) for m in metas],
     }
+
+
+@router.get("/stats")
+async def knowledge_stats():
+    """返回知识库统计信息"""
+    try:
+        collection = get_collection()
+        count = collection.count()
+        return {"total_chunks": count, "status": "ready" if count > 0 else "empty"}
+    except Exception:
+        return {"total_chunks": 0, "status": "uninitialized"}

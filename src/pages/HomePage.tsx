@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { courseApi, progressApi } from '../api'
+import NavBar from '../components/learn/NavBar'
 import styles from './HomePage.module.css'
 
 interface Course {
@@ -25,14 +26,8 @@ const DIFF_LABEL: Record<string, string> = {
   advanced: '高级',
 }
 
-const DIFF_COLOR: Record<string, string> = {
-  beginner: '#3fb950',
-  intermediate: '#d29922',
-  advanced: '#f85149',
-}
-
 export default function HomePage() {
-  const { user, logout, isTeacher } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
   const [courses, setCourses] = useState<Course[]>([])
   const [progress, setProgress] = useState<Progress | null>(null)
@@ -48,30 +43,7 @@ export default function HomePage() {
 
   return (
     <div className={styles.page}>
-      {/* ── 导航栏 ── */}
-      <nav className={styles.nav}>
-        <div className={styles.navBrand}>
-          <span className={styles.navLogo}>🐍</span>
-          <span className={styles.navTitle}>Python 学习</span>
-        </div>
-        <div className={styles.navLinks}>
-          <Link to="/courses" className={styles.navLink}>课程</Link>
-          <Link to="/exercises" className={styles.navLink}>练习</Link>
-          <Link to="/editor" className={styles.navLink}>代码编辑器</Link>
-          {isTeacher && <Link to="/admin" className={styles.navLink}>管理</Link>}
-          {user ? (
-            <div className={styles.userArea}>
-              <span className={styles.username}>👤 {user.username}</span>
-              <button className={styles.logoutBtn} onClick={logout}>退出</button>
-            </div>
-          ) : (
-            <div className={styles.authArea}>
-              <Link to="/login" className={styles.loginBtn}>登录</Link>
-              <Link to="/register" className={styles.registerBtn}>注册</Link>
-            </div>
-          )}
-        </div>
-      </nav>
+      <NavBar />
 
       {/* ── Hero ── */}
       <section className={styles.hero}>
@@ -82,10 +54,10 @@ export default function HomePage() {
           交互式代码编辑 · AI 智能辅导 · 即时判题反馈
         </p>
         <div className={styles.heroBtns}>
-          <button className={styles.heroPrimary} onClick={() => navigate('/courses')}>
+          <button type="button" className={styles.heroPrimary} onClick={() => navigate('/courses')}>
             开始学习 →
           </button>
-          <button className={styles.heroSecondary} onClick={() => navigate('/editor')}>
+          <button type="button" className={styles.heroSecondary} onClick={() => navigate('/editor')}>
             打开编辑器
           </button>
         </div>
@@ -117,12 +89,9 @@ export default function HomePage() {
         ) : (
           <div className={styles.courseGrid}>
             {courses.map(c => (
-              <Link key={c.id} to={`/courses/${c.id}`} className={styles.courseCard}>
+              <Link key={c.id} to={`/courses/${c.id}`} className={`${styles.courseCard} ${styles[`diff_${c.difficulty}`]}`}>
                 <div className={styles.cardTop}>
-                  <span
-                    className={styles.diffBadge}
-                    style={{ color: DIFF_COLOR[c.difficulty], borderColor: DIFF_COLOR[c.difficulty] }}
-                  >
+                  <span className={`${styles.diffBadge} ${styles[`diffBadge_${c.difficulty}`]}`}>
                     {DIFF_LABEL[c.difficulty] ?? c.difficulty}
                   </span>
                   <span className={styles.lessonCount}>{c.lesson_count} 节</span>
