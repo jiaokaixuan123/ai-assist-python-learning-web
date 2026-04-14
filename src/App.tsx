@@ -14,6 +14,7 @@ const ExerciseDetailPage = lazy(() => import('./pages/ExerciseDetailPage'))
 const EditorPage        = lazy(() => import('./pages/EditorPage'))
 const AdminPage         = lazy(() => import('./pages/AdminPage'))
 const BooksPage         = lazy(() => import('./pages/BooksPage'))
+const LearningCurvePage = lazy(() => import('./pages/LearningCurvePage'))
 
 // AiTutor 含 react-markdown / highlight.js 等重量依赖，必须懒加载
 const AiTutor = lazy(() => import('./components/AiTutor/AiTutor'))
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="/exercises/:exerciseId" element={<ExerciseDetailPage />} />
         <Route path="/editor" element={<EditorPage />} />
         <Route path="/books" element={<BooksPage />} />
+        <Route path="/learning-curve" element={<LearningCurvePage />} />
         <Route path="/admin" element={<TeacherRoute><AdminPage /></TeacherRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

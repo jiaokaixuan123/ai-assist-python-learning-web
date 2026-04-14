@@ -144,3 +144,19 @@ export const aiApi = {
   /** AI 状态查询（是否已配置等） */
   status: () => api.get('/api/ai/status'),
 }
+
+// ── Analytics（学习曲线）───────────────────────
+export const analyticsApi = {
+  /** 获取学习曲线聚合数据（含图表数据 + AI 洞察） */
+  getMyCurve: () => api.get('/api/analytics/my-curve'),
+
+  /** 手动触发曲线重新计算（60s 冷却） */
+  refresh: () => api.post('/api/analytics/refresh-my-curve'),
+
+  /** 轻量查询：是否有数据、记录数、最后更新时间 */
+  status: () => api.get('/api/analytics/my-curve/status'),
+
+  /** 分页获取原始分析记录 */
+  getRawRecords: (limit = 50, offset = 0) =>
+    api.get('/api/analytics/my-curve/raw', { params: { limit, offset } }),
+}

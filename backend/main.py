@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from core.database import close_db, connect_db, settings
-from routers import admin, auth, books, courses, exercises, judge, knowledge, progress, ai
+from routers import admin, auth, books, courses, exercises, judge, knowledge, progress, ai, analytics
 
 
 class SPAStaticFiles(StaticFiles):
@@ -25,8 +25,13 @@ class SPAStaticFiles(StaticFiles):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await connect_db()
+    # 启动定时任务调度器（每日 3AM 学习曲线聚合）
+    from tasks.scheduler import start_scheduler
+    start_scheduler()
     yield
     await close_db()
+    from tasks.scheduler import shutdown_scheduler
+    shutdown_scheduler()
 
 
 app = FastAPI(title="Python 教学网站 API", lifespan=lifespan)
@@ -48,6 +53,7 @@ app.include_router(judge.router)
 app.include_router(knowledge.router)
 app.include_router(books.router)
 app.include_router(ai.router)
+app.include_router(analytics.router)
 
 # 静态文件服务（书籍文件下载/预览）
 uploads_dir = Path(__file__).parent / "uploads"

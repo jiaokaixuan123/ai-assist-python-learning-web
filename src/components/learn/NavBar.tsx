@@ -32,6 +32,7 @@ export default function NavBar({ title, backTo }: Props) {
         <Link to="/exercises" className={styles.link}>练习</Link>
         <Link to="/books" className={styles.link}>书籍</Link>
         <Link to="/editor" className={styles.link}>编辑器</Link>
+        {user && <Link to="/learning-curve" className={styles.link}>📊 学习曲线</Link>}
         {user ? (
           <>
             {isTeacher && <Link to="/admin" className={styles.link}>管理</Link>}

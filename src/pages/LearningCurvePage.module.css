@@ -1,0 +1,326 @@
+/* ══════════════════════════
+   LearningCurve Page Styles
+   ══════════════════════════ */
+
+.page {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+/* ── Header ── */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.refreshBtn {
+  padding: 6px 16px;
+  font-size: 13px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: all .15s;
+}
+.refreshBtn:hover:not(.disabled) {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+.disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* ── Grid Layout ── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 800px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Cards ── */
+
+.chartCard {
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  margin-bottom: 16px;
+}
+
+.cardTitle {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* ── Score Card ── */
+
+.scoreCard {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.scoreLabel {
+  font-size: 13px;
+  opacity: .85;
+}
+
+.scoreValue {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.levelBadge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  margin-left: auto;
+}
+
+.levelNormal  { background: rgba(16,185,129,.3); }
+.levelElevated { background: rgba(245,158,11,.35); }
+.levelRunaway  { background: rgba(239,68,68,.35); }
+
+/* ── Trend Row ── */
+
+.trendRow {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+  margin-top: 10px;
+}
+
+.trendItem {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.trendIcon {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ── Insight Card ── */
+
+.insightCard {
+  min-height: 180px;
+}
+
+.insightBody {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #374151;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.insightBody p { margin: 0; }
+
+.placeholder {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* ── Recommendations ── */
+
+.recoList {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+.recoList li {
+  font-size: 12.5px;
+  color: #4b5563;
+  line-height: 1.7;
+  margin-bottom: 2px;
+}
+
+/* ── Pattern Tags ── */
+
+.patternSection {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  margin-bottom: 16px;
+}
+
+.subTitle {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.tagGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.patternTag {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  background: #ede9fe;
+  color: #6d28d9;
+  font-weight: 500;
+}
+
+/* ── Risk Section ── */
+
+.riskSection {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  margin-bottom: 16px;
+}
+
+.riskList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.riskItem {
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #991b1b;
+  background: #fef2f2;
+  border-radius: 6px;
+  border-left: 3px solid #ef4444;
+}
+
+/* ── Footer Stats ── */
+
+.statsFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 16px 24px;
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  max-width: 1200px;
+  margin: 0 auto 30px;
+  border-radius: 0 0 10px 10px;
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statNum {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.statDivider {
+  width: 1px;
+  height: 28px;
+  background: #e5e7eb;
+}
+
+/* ── Loading / Error Center ── */
+
+.centerMsg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: #6b7280;
+  gap: 12px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.errorText {
+  color: #dc2626;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ── Polling Overlay（刷新等待遮罩）── */
+
+.pollingOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(15,23,42,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pollingBox {
+  background: #fff;
+  border-radius: 14px;
+  padding: 32px 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+}
+
+.pollingBox p {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #1e293b;
+}
